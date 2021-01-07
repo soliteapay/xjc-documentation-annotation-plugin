@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:complexType name="Customer">
+        <xs:annotation>
+            <xs:documentation>this is customer annotation</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>this is name annotation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="age" type="xs:positiveInteger">
+                <xs:annotation>
+                    <xs:documentation>this is age annotation</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="telephone" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation />
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="title" type="xs:string">
+                <xs:annotation />
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

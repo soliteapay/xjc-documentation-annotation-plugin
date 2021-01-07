@@ -1,3 +1,13 @@
+Note to fillumina's version 2.0+:
+=================================
+
+Mavenized refactored and added some tests.
+
+The following is the original comments by Hubbitus [Hubbitus /
+xjc-documentation-annotation-plugin](https://github.com/Hubbitus/xjc-documentation-annotation-plugin):
+
+-------
+
 [![Autobuild Status](https://travis-ci.org/Hubbitus/xjc-documentation-annotation-plugin.svg?branch=master)](https://travis-ci.org/Hubbitus/xjc-documentation-annotation-plugin)
 
 XJC plugin to bring XSD descriptions into annotations of generated classes
