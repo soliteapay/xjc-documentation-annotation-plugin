@@ -2,7 +2,7 @@ Note to fillumina's version 2.0+:
 =================================
 
 Mavenized, refactored and fixed some bugs related to empty entities. A simple java test suite
-has been added also.
+has been added too.
 
 The following is the original comments by Hubbitus [Hubbitus /
 xjc-documentation-annotation-plugin](https://github.com/Hubbitus/xjc-documentation-annotation-plugin):
