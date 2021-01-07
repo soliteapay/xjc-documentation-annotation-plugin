@@ -202,6 +202,17 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
             return this;
         }
         
+        public AttributeTester assertAnnotationNotPresent(String annotation) {
+            long counter = annotationList.stream()
+                    .filter(l -> l.trim().startsWith("@" + annotation))
+                    .count();
+            if (counter != 0) {
+                throw new AssertionError("annotation " + annotation + " of attribute " + 
+                    attributeName + " in " + filename + " found");
+            }
+            return this;
+        }
+        
         public AnnotationTester annotation(String annotation) {
             String line = annotationList.stream()
                     .filter(l -> l.trim().startsWith("@" + annotation))
