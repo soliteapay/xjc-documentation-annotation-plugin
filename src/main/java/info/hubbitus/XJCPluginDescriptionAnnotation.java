@@ -24,6 +24,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * XJC plugin to place XSD documentation annotations ({@code <xs:annotation><xs:documentation>}) for
@@ -69,6 +71,7 @@ import org.xml.sax.ErrorHandler;
  * @since 2019-01-17 03:34.
  */
 public class XJCPluginDescriptionAnnotation extends Plugin {
+
     public static final String NAME = "XPluginDescriptionAnnotation";
 
     @Override
@@ -88,36 +91,39 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
     }
 
     @Override
-    public boolean run(Outline model, Options opt, ErrorHandler errorHandler) {
-        model.getClasses().forEach( (ClassOutline c) -> {
-            CClassInfo classInfo = c.target;
-            
-            annotateUnescaped(
-                c.implClass,
-                XsdInfo.class,
-                Map.of(
-                    "name", classInfoGetDescriptionAnnotation(classInfo),
-                    "xsdElementPart", getXsdXmlDeclaration(classInfo.getSchemaComponent()) 
-                ) 
-            );
-
-            c.implClass.fields().forEach((String name, JFieldVar jField) -> {
-                CPropertyInfo property = classInfo.getProperties().stream()
-                    .filter(it -> it.getName(false).equals(jField.name()))
-                    .findAny()
-                    .orElseThrow(() -> new IllegalStateException("Can't find property [" + 
-                        jField.name() + "] in class [" + classInfo.getTypeName() + "]"));
+    public boolean run(Outline model, Options opt, ErrorHandler errorHandler) throws SAXException {
+        try {
+            model.getClasses().forEach((ClassOutline c) -> {
+                CClassInfo classInfo = c.target;
+                final String description = classInfoGetDescriptionAnnotation(classInfo);
                 
-                final String annotation = fieldGetDescriptionAnnotation(property);
-                if (annotation != null) {
-                    annotateUnescaped(jField, XsdInfo.class, 
-                        Map.of("name", annotation) 
+                if (description != null) {
+                    annotateUnescaped(c.implClass, XsdInfo.class,
+                        Map.of("name", description)
                     );
                 }
-            });
-        }
-        );
 
+                c.implClass.fields().forEach((String name, JFieldVar jField) -> {
+                    CPropertyInfo property = classInfo.getProperties().stream()
+                        .filter(it -> it.getName(false).equals(jField.name()))
+                        .findAny()
+                        .orElseThrow(() -> new IllegalStateException("Can't find property [" +
+                            jField.name() + "] in class [" + classInfo.getTypeName() + "]"));
+
+                    final String annotation = fieldGetDescriptionAnnotation(property);
+                    if (annotation != null) {
+                        annotateUnescaped(jField, XsdInfo.class,
+                            Map.of("name", annotation)
+                        );
+                    }
+                });
+            }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorHandler.error(new SAXParseException(e.getMessage(), null, e));
+            return false;
+        }
         return true;
     }
 
@@ -141,9 +147,9 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
     @SuppressWarnings("unchecked")
     private static void annotateUnescaped(
         JAnnotatable object,
-        Class<? extends Annotation> annotationClass, 
+        Class<? extends Annotation> annotationClass,
         Map<String, String> parameters) {
-        
+
         assert parameters.size() > 0;
 
         JAnnotationUse annotation = object.annotate(annotationClass);
@@ -152,7 +158,7 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
         // {@see com.sun.codemodel.JAnnotationUse.memberValues}
         Map<String, JExpression> memberMap =
             (Map<String, JExpression>) getPrivateField(annotation, "memberValues");
-        
+
         if (null == memberMap) {
             // Just init memberValues private map, such key will be replaced
             annotation.param(parameters.keySet().iterator().next(), "");
@@ -188,10 +194,10 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
 
     static private String fieldGetDescriptionAnnotation(CPropertyInfo propertyInfo) {
         String description = "";
-        
+
         XSComponent schemaComponent = propertyInfo.getSchemaComponent();
         XSAnnotation annotation = null;
-        
+
         //<xs:complexType name="TDocumentRefer">
         //		<xs:attribute name="documentID" use="required">
         //			<xs:annotation>
@@ -199,20 +205,15 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
         if (schemaComponent instanceof AttributeUseImpl) {
             final AttributeUseImpl attribute = (AttributeUseImpl) propertyInfo.getSchemaComponent();
             annotation = attribute.getDecl().getAnnotation();
-        }
-
-        // <xs:complexType name="TBasicInterdepStatement">
+        } // <xs:complexType name="TBasicInterdepStatement">
         //		<xs:element name="header" type="stCom:TInterdepStatementHeader" minOccurs="0">
         //				<xs:annotation>
         //					<xs:documentation>Заголовок заявления</xs:documentation>
         else if (schemaComponent instanceof ParticleImpl) {
             annotation = ((ParticleImpl) schemaComponent).getTerm().getAnnotation();
+
         }
-        
-        else {
-            throw new AssertionError();
-        }
-        
+
         if (annotation != null && annotation.getAnnotation() instanceof BindInfo) {
             final BindInfo bindInfo = (BindInfo) annotation.getAnnotation();
             description = bindInfo.getDocumentation();
