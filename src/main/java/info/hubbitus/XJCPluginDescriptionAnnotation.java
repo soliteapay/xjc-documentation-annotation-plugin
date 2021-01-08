@@ -97,7 +97,7 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
                 CClassInfo classInfo = c.target;
                 final String description = classInfoGetDescriptionAnnotation(classInfo);
                 
-                if (description != null) {
+                if (description != null && !description.isBlank()) {
                     annotateUnescaped(c.implClass, XsdInfo.class,
                         Map.of("name", description)
                     );
@@ -110,10 +110,10 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
                         .orElseThrow(() -> new IllegalStateException("Can't find property [" +
                             jField.name() + "] in class [" + classInfo.getTypeName() + "]"));
 
-                    final String annotation = fieldGetDescriptionAnnotation(property);
-                    if (annotation != null) {
+                    final String fieldDescription = fieldGetDescriptionAnnotation(property);
+                    if (fieldDescription != null && !fieldDescription.isBlank()) {
                         annotateUnescaped(jField, XsdInfo.class,
-                            Map.of("name", annotation)
+                            Map.of("name", fieldDescription)
                         );
                     }
                 });

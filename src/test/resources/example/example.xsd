@@ -13,7 +13,7 @@
             </xs:element>
             <xs:element name="age" type="xs:positiveInteger">
                 <xs:annotation>
-                    <xs:documentation>this is age annotation</xs:documentation>
+                    <xs:documentation></xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="address" type="xs:string"/>

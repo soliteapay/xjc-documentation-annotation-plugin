@@ -21,10 +21,7 @@ public class XJCPluginDescriptionAnnotationTest extends RunXJC2MojoTestHelper {
                 .annotation("XsdInfo")
                     .assertParam("name", "this is name annotation").end()
                     .end()
-            .attribute("age")
-                .annotation("XsdInfo")
-                    .assertParam("name", "this is age annotation").end()
-                    .end()
+            .attribute("age").assertAnnotationNotPresent("XsdInfo").end()
             .attribute("address").assertAnnotationNotPresent("XsdInfo").end()
             .attribute("telephone").assertAnnotationNotPresent("XsdInfo").end()
             .attribute("title").assertAnnotationNotPresent("XsdInfo");
