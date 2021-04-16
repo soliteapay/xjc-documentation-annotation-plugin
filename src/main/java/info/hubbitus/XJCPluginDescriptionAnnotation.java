@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.Map;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -96,10 +97,10 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
             model.getClasses().forEach((ClassOutline c) -> {
                 CClassInfo classInfo = c.target;
                 final String description = classInfoGetDescriptionAnnotation(classInfo);
-                
-                if (description != null && !description.isBlank()) {
+
+                if (description != null && !description.trim().isEmpty()) {
                     annotateUnescaped(c.implClass, XsdInfo.class,
-                        Map.of("name", description)
+                        Collections.singletonMap("name", description)
                     );
                 }
 
@@ -111,9 +112,9 @@ public class XJCPluginDescriptionAnnotation extends Plugin {
                             jField.name() + "] in class [" + classInfo.getTypeName() + "]"));
 
                     final String fieldDescription = fieldGetDescriptionAnnotation(property);
-                    if (fieldDescription != null && !fieldDescription.isBlank()) {
+                    if (fieldDescription != null && !fieldDescription.trim().isEmpty()) {
                         annotateUnescaped(jField, XsdInfo.class,
-                            Map.of("name", fieldDescription)
+                            Collections.singletonMap("name", fieldDescription)
                         );
                     }
                 });
