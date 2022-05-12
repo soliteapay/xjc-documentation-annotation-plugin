@@ -109,3 +109,5 @@ fabric.properties
 .idea/httpRequests
 /target/
 /nbproject/
+
+.idea
