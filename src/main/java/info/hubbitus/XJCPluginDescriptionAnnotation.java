@@ -17,7 +17,7 @@ import com.sun.xml.xsom.XSComponent;
 import com.sun.xml.xsom.impl.AttributeUseImpl;
 import com.sun.xml.xsom.impl.ParticleImpl;
 import com.sun.xml.xsom.impl.util.SchemaWriter;
-import info.hubbitus.annotation.XsdInfo;
+import com.soliteapay.portal.xjc.XsdInfo;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;

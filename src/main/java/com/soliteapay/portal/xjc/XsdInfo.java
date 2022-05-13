@@ -1,4 +1,4 @@
-package info.hubbitus.annotation;
+package com.soliteapay.portal.xjc;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
